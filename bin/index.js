@@ -8950,12 +8950,14 @@ function main() {
         const baseBranch = github.context.payload.ref;
         console.log(`Merging ${baseBranch} into branches with open pull requests`);
         const pullsResponse = yield client.pulls.list(Object.assign(Object.assign({}, github.context.repo), { base: baseBranch, state: 'open' }));
-        const prs = pullsResponse.data;
-        console.log(`Branches: ${prs.length}`);
-        prs.forEach(function (pr) {
+        const OpenPrs = pullsResponse.data;
+        console.log(`Branches (Open): ${OpenPrs.length}`);
+        const filteredPrs = OpenPrs.filter(function (pr) { pr.labels.filter(function (label) { label.name == 'automerge'; }); });
+        console.log(`Branches (Filtered): ${filteredPrs.length}`);
+        filteredPrs.forEach(function (pr) {
             console.log(pr);
         });
-        yield Promise.all(prs.map((pr) => {
+        yield Promise.all(filteredPrs.map((pr) => {
             client.pulls.updateBranch(Object.assign(Object.assign({}, github.context.repo), { pull_number: pr.number }));
         }));
     });

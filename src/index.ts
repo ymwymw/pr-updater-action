@@ -12,13 +12,15 @@ async function main() {
         base: baseBranch,
         state: 'open',
     })
-    const prs = pullsResponse.data
-    console.log(`Branches: ${prs.length}`)
-    prs.forEach(function (pr) {
+    const OpenPrs = pullsResponse.data
+    console.log(`Branches (Open): ${OpenPrs.length}`)
+    const filteredPrs = OpenPrs.filter(function (pr){pr.labels.filter(function (label){label.name == 'automerge'})})
+    console.log(`Branches (Filtered): ${filteredPrs.length}`)
+    filteredPrs.forEach(function (pr) {
         console.log(pr)
     })
     await Promise.all(
-        prs.map((pr) => {
+        filteredPrs.map((pr) => {
             client.pulls.updateBranch({
                 ...github.context.repo,
                 pull_number: pr.number,
