@@ -8949,9 +8949,15 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const baseBranch = github.context.payload.ref;
         const pullsResponse = yield client.pulls.list(Object.assign(Object.assign({}, github.context.repo), { base: baseBranch, state: 'open' }));
-        const OpenPrs = pullsResponse.data;
-        console.log(`Branches (Open): ${OpenPrs.length}`);
-        const filteredPrs = OpenPrs.filter(function (pr) { pr.labels.filter(function (label) { label.name == 'automerge'; }).length == 1; });
+        const openPrs = pullsResponse.data;
+        console.log(`Branches (Open): ${openPrs.length}`);
+        const filteredPrs = openPrs.filter(function (pr) {
+            console.log(`-PR: ${pr.number}`);
+            return pr.labels.filter(function (label) {
+                console.log(`--Label: ${label.name}`);
+                return label.name == 'automerge';
+            }).length == 1;
+        });
         console.log(`Branches (Filtered): ${filteredPrs.length}`);
         filteredPrs.forEach(function (pr) {
             console.log(pr);
