@@ -8948,15 +8948,15 @@ const client = new github.GitHub(token);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const baseBranch = github.context.payload.ref;
-        console.log(`Merging ${baseBranch} into branches with open pull requests`);
         const pullsResponse = yield client.pulls.list(Object.assign(Object.assign({}, github.context.repo), { base: baseBranch, state: 'open' }));
         const OpenPrs = pullsResponse.data;
         console.log(`Branches (Open): ${OpenPrs.length}`);
-        const filteredPrs = OpenPrs.filter(function (pr) { pr.labels.filter(function (label) { label.name == 'automerge'; }); });
+        const filteredPrs = OpenPrs.filter(function (pr) { pr.labels.filter(function (label) { label.name == 'automerge'; }).length == 1; });
         console.log(`Branches (Filtered): ${filteredPrs.length}`);
         filteredPrs.forEach(function (pr) {
             console.log(pr);
         });
+        console.log(`Merging '${baseBranch}' into branches with open pull requests that have the 'automerge' label`);
         yield Promise.all(filteredPrs.map((pr) => {
             client.pulls.updateBranch(Object.assign(Object.assign({}, github.context.repo), { pull_number: pr.number }));
         }));
