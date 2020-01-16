@@ -8959,7 +8959,11 @@ function main() {
             }).length == 1;
         });
         console.log(`Branches (Filtered): ${filteredPrs.length}`);
-        filteredPrs.forEach(function (pr) {
+        console.log(`Data Dump:`);
+        openPrs.forEach(function (pr) {
+            console.log(`=========================`);
+            console.log(`PR: ${pr.number}`);
+            console.log(`=========================`);
             console.log(pr);
         });
         console.log(`Merging '${baseBranch}' into branches with open pull requests that have the 'automerge' label`);
